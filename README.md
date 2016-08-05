@@ -3,7 +3,7 @@
 详细介绍见简书http://www.jianshu.com/p/abb90abfcda8
 
 
-[推拉.gif](http://upload-images.jianshu.io/upload_images/1394392-a6af5776b844a3f6.gif?imageMogr2/auto-orient/strip)
+[![推拉.gif]](http://upload-images.jianshu.io/upload_images/1394392-a6af5776b844a3f6.gif?imageMogr2/auto-orient/strip)
 **之前在某款APP中看到了这种照片浏览效果，惊艳之余也用心思考并实现了出来，现在特地拿出来分享给大家。**
 *****
 
