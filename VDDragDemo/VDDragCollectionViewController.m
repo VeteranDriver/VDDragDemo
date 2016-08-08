@@ -11,7 +11,7 @@
 #import "VDDragCollectionViewController.h"
 #import "VDDragCollectionViewCell.h"
 
-#define imageCount 20
+#define imageCount 19
 @interface VDDragCollectionViewController ()
 
 @property (nonatomic, assign) CGFloat offsetY;
@@ -34,9 +34,10 @@ static NSString * const reuseIdentifier = @"VDDragCell";
     
     if (self = [super initWithCollectionViewLayout:layout]) {
         
-        self.collectionView.pagingEnabled = YES;
         self.offsetY = 0;
+        self.collectionView.pagingEnabled = YES;
         self.collectionView.backgroundColor = [UIColor whiteColor];
+        self.collectionView.showsVerticalScrollIndicator = NO;
     }
     
     return self;
@@ -76,8 +77,13 @@ static NSString * const reuseIdentifier = @"VDDragCell";
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
+    if (scrollView.contentOffset.y < 0) {//顶部第一个cell下拉不产生效果
+        
+        return;
+    }
+    
     //获取到当前cell
-    int offset = scrollView.contentOffset.y / [UIScreen mainScreen].bounds.size.height ;
+    NSInteger offset = scrollView.contentOffset.y / [UIScreen mainScreen].bounds.size.height ;
     NSIndexPath *index = [NSIndexPath indexPathForItem:offset inSection:0];
     UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:index];
     
@@ -85,9 +91,10 @@ static NSString * const reuseIdentifier = @"VDDragCell";
     NSIndexPath *nextIndex = [NSIndexPath indexPathForItem:offset + 1 inSection:0];
     UICollectionViewCell *nextCell = [self.collectionView cellForItemAtIndexPath:nextIndex];
     
+    
     //将下一个cell插入到当前cell的下方
     CGRect rect = nextCell.frame;
-    rect.origin.y = scrollView.contentOffset.y;
+    rect.origin.y = self.collectionView.contentOffset.y;
     nextCell.frame = rect;
     
     [self.collectionView insertSubview:nextCell belowSubview:cell];
@@ -100,11 +107,13 @@ static NSString * const reuseIdentifier = @"VDDragCell";
         
         self.currentCell = nil;
         self.currentCell = cell;
-        
     }
+    
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    
+    [self adjustCurrentCell:scrollView];//暂时修复底部间隙BUG，待修改
     
     self.offsetY = scrollView.contentOffset.y;
     self.currentCell.alpha = 1.0;
@@ -112,7 +121,16 @@ static NSString * const reuseIdentifier = @"VDDragCell";
 }
 
 
-
-
+- (void)adjustCurrentCell:(UIScrollView *)scrollView {
+    
+    //获取到当前cell
+    NSInteger offset = scrollView.contentOffset.y / [UIScreen mainScreen].bounds.size.height ;
+    NSIndexPath *index = [NSIndexPath indexPathForItem:offset inSection:0];
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:index];
+    
+    CGRect rect = cell.frame;
+    rect.origin.y = self.collectionView.contentOffset.y;
+    cell.frame = rect;
+}
 
 @end
